@@ -1,0 +1,47 @@
+import nltk
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+from nltk.stem import PorterStemmer, WordNetLemmatizer
+from nltk.probability import FreqDist
+import math
+
+# Sample document
+document = "This is a sample document for text preprocessing. It includes tokenization, POS tagging, stop words removal, stemming, and lemmatization."
+
+# Tokenization
+tokens = word_tokenize(document)
+
+# POS tagging
+pos_tags = nltk.pos_tag(tokens)
+
+# Stop words removal
+stop_words = set(stopwords.words('english'))
+filtered_tokens = [word for word in tokens if word.lower() not in stop_words]
+
+# Stemming
+stemmer = PorterStemmer()
+stemmed_tokens = [stemmer.stem(word) for word in filtered_tokens]
+
+# Lemmatization
+lemmatizer = WordNetLemmatizer()
+lemmatized_tokens = [lemmatizer.lemmatize(word) for word in filtered_tokens]
+
+# Calculate TF
+tf = FreqDist(stemmed_tokens)
+
+# Calculate IDF
+total_docs = 1  # Assuming only one document for simplicity
+idf = {}
+for term in tf.keys():
+    doc_freq = sum(term in doc for doc in [stemmed_tokens])
+    idf[term] = math.log10(total_docs / (doc_freq + 1))  # Adding 1 to avoid division by zero
+
+# Print results
+print("Original Document:", document)
+print("Tokenization:", tokens)
+print("POS Tagging:", pos_tags)
+print("Filtered Tokens after Stopwords Removal:", filtered_tokens)
+print("Stemming:", stemmed_tokens)
+print("Lemmatization:", lemmatized_tokens)
+print("Term Frequency (TF):", tf)
+print("Inverse Document Frequency (IDF):", idf)
